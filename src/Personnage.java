@@ -6,40 +6,27 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 
 public class Personnage {
-    private int x, y; // position du perso
-    private int largeur = 205; // dimensions du perso
-    private int hauteur = 500;
-    private int vitesse = 15; //vitesse en pixel
-
-    private boolean haut, bas, gauche, droite; //états des touches mouvements
-    private int dernierX, dernierY; //position précédente (annulation dépclacement si collision)
-    private BufferedImage imageDos, imageFace, imageGauche, imageDroite; //images du perso
-    private BufferedImage imageActuelle; //image à l'instant t
-    private String dernierDirection = "dos"; //firection du perso à l'instant t
+    private int x, y;
+    private final int largeur = 205, hauteur = 500, vitesse = 15;
+    private int dernierX, dernierY;
+    private String direction = "dos"; // la position initiale du peros est de dos
+    private BufferedImage imageDos, imageFace, imageGauche, imageDroite, imageActuelle;
+    private boolean haut, bas, gauche, droite, toucheE;
 
     public Personnage(int x, int y) {
         this.x = x;
         this.y = y;
-        chargerImage();
+        chargerImages();
         imageActuelle = imageDos;
     }
 
-
-    private void chargerImage() {
+    private void chargerImages() {
+        String chemin = "ressources\\";
         try {
-            String chemin = "C:\\Users\\ewanm\\Desktop\\P4\\Dev_App\\Escape-Game\\ressources\\";
-            // On charger les 4 images de direction
-            BufferedImage persoDos = ImageIO.read(new File(chemin + "perso_dos.png"));
-            BufferedImage persoFace = ImageIO.read(new File(chemin + "perso_face.png"));
-            BufferedImage persoGauche = ImageIO.read(new File(chemin + "perso_gauche.png"));
-            BufferedImage persoDroite = ImageIO.read(new File(chemin + "perso_droite.png"));
-
-            // On rdimensionner chaque image aux dimensions du perso
-            imageDos = redimensionnerImage(persoDos);
-            imageFace = redimensionnerImage(persoFace);
-            imageGauche = redimensionnerImage(persoGauche);
-            imageDroite = redimensionnerImage(persoDroite);
-
+            imageDos = redimensionnerImage(ImageIO.read(new File(chemin + "perso_dos.png")));
+            imageFace = redimensionnerImage(ImageIO.read(new File(chemin + "perso_face.png")));
+            imageGauche = redimensionnerImage(ImageIO.read(new File(chemin + "perso_gauche.png")));
+            imageDroite = redimensionnerImage(ImageIO.read(new File(chemin + "perso_droite.png")));
         } catch (IOException e) {
             System.err.println("Erreur de chargement d'une image: " + e.getMessage());
         }
@@ -47,7 +34,6 @@ public class Personnage {
 
     private BufferedImage redimensionnerImage(BufferedImage originale) {
         if (originale == null) return null;
-
         Image tmp = originale.getScaledInstance(largeur, hauteur, Image.SCALE_SMOOTH);
         BufferedImage resized = new BufferedImage(largeur, hauteur, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resized.createGraphics();
@@ -56,97 +42,90 @@ public class Personnage {
         return resized;
     }
 
-    // Gère l'évènement de la touche enfoncée
-    public void toucheEnfoncee(KeyEvent e) { //Gère les touches endoncées clavier
+
+    public void toucheEnfoncee(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_Z: haut = true; break;
-            case KeyEvent.VK_S: bas = true; break;
-            case KeyEvent.VK_Q: gauche = true; break;
-            case KeyEvent.VK_D: droite = true; break;
+            case KeyEvent.VK_Z:
+                haut = true;
+                bas = gauche = droite = false;
+                break;
+            case KeyEvent.VK_S:
+                bas = true;
+                haut = gauche = droite = false;
+                break;
+            case KeyEvent.VK_Q:
+                gauche = true;
+                haut = bas = droite = false;
+                break;
+            case KeyEvent.VK_D:
+                droite = true;
+                haut = bas = gauche = false;
+                break;
+            case KeyEvent.VK_E:
+                toucheE = true;
         }
     }
 
-    // Gère l'évènement de la touche relâchée
-    public void toucheRelachee(KeyEvent e) {//Gère les touches relachées// clavier
+    public void toucheRelachee(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_Z: haut = false; break;
             case KeyEvent.VK_S: bas = false; break;
             case KeyEvent.VK_Q: gauche = false; break;
             case KeyEvent.VK_D: droite = false; break;
+            case KeyEvent.VK_E: toucheE = false;
         }
     }
 
-    // Déplace le perso en fonctions des touches enfoncées & màj l'image correspondante
+    public boolean EAppuyee() { return toucheE; }
+
     public void deplacer() {
         dernierX = x;
         dernierY = y;
 
-        boolean aMouvementX = false;
-        boolean aMouvementY = false;
-
-        // Déplacement vertical vers le haut
-        if (haut == true) {
+        if (haut) {
             y -= vitesse;
             imageActuelle = imageDos;
-            dernierDirection = "dos";
-            aMouvementY = true;
+            direction = "dos";
         }
-
-        // Déplacement vertical vers le bas
-        if (bas == true) {
+        if (bas) {
             y += vitesse;
             imageActuelle = imageFace;
-            dernierDirection = "face";
-            aMouvementY = true;
+            direction = "face";
         }
-
-        // Déplacement horizontal vers la gauche
-        if (gauche == true) {
+        if (gauche) {
             x -= vitesse;
             imageActuelle = imageGauche;
-            dernierDirection = "gauche";
-            aMouvementX = true;
+            direction = "gauche";
         }
-
-        // Déplacement horizontal vers la droite
-        if (droite == true) {
+        if (droite) {
             x += vitesse;
             imageActuelle = imageDroite;
-            dernierDirection = "droite";
-            aMouvementX = true;
-        }
-
-        // Si on a deux mouvements simultanés, prioriser horizontal
-        if (aMouvementX && aMouvementY) {
-            if (dernierDirection.equals("gauche")) {
-                imageActuelle = imageGauche;
-            } else if (dernierDirection.equals("droite")) {
-                imageActuelle = imageDroite;
-            }
+            direction = "droite";
         }
     }
 
-    // Annule le dernier déplacement en cas de collision
     public void annulerDeplacement() {
         x = dernierX;
         y = dernierY;
     }
 
-    // Vérifie s'il y a collision entre les pieds du personnage et un obstacle
     public boolean collision(Obstacle obs) {
-        // Coordonnées des pieds du personnage
         int piedY = this.y + this.hauteur;
-
-        // Vérification de collision seulement pour les pieds
         return this.x < obs.getX() + obs.getLargeur() &&
                 this.x + this.largeur > obs.getX() &&
                 piedY < obs.getY() + obs.getHauteur() &&
                 piedY + 5 > obs.getY();
     }
 
-    // Dessine le personnage
     public void dessiner(Graphics2D g) {
         g.drawImage(imageActuelle, x, y, null);
     }
 
+    // Getters et Setters
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public void setX(int x) { this.x = x; }
+    public void setY(int y) { this.y = y; }
+    public int getLargeur() { return largeur; }
+    public int getHauteur() { return hauteur; }
 }

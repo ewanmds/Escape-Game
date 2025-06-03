@@ -4,8 +4,6 @@ public class Obstacle {
     private int x, y;
     private int largeur, hauteur;
 
-
-
     public Obstacle(int x, int y, int largeur, int hauteur) {
         this.x = x;
         this.y = y;
