@@ -1,3 +1,5 @@
+package Jeu;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -5,6 +7,10 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
 
+
+import Decor.Obstacle;
+import Decor.Personnage;
+import Decor.Piece;
 
 public class Jeux extends JPanel {
     private Image background;

@@ -1,4 +1,4 @@
-import java.awt.*;
+package Decor;
 
 public class Obstacle {
     private int x, y;
