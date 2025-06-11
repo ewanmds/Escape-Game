@@ -11,7 +11,10 @@ public class Obstacle {
         this.hauteur = hauteur;
     }
 
+
     // Getters & Setters
+
+
     public int getX() { return x; }
     public int getY() { return y; }
     public int getLargeur() { return largeur; }

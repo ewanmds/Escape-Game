@@ -1,8 +1,11 @@
 package Jeu;
 
+
 import Decor.Obstacle;
 import Decor.Personnage;
 import Decor.Piece;
+
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +13,13 @@ import java.awt.event.*;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
+
+
+
+=======
+import Decor.Obstacle;
+import Decor.Personnage;
+import Decor.Piece;
 
 
 public class Jeux extends JPanel {
@@ -28,7 +38,11 @@ public class Jeux extends JPanel {
             perso = new Personnage(500, 500);
             obstacles.addAll(pieces.get(i).getObstacles());
 
+
             setFocusable(true); // Fait la liaison entre clavier et le Jpanel
+
+            setFocusable(true); // Fait liaison entre clavier et le Jpanel
+
 
             // Écoute les évènements du claviers (touches enfoncées ou relachées)
             addKeyListener(new KeyAdapter() {
@@ -172,5 +186,9 @@ public class Jeux extends JPanel {
         frame.pack(); // Ajuste la fenêtre avec le contenue ( background)
         frame.setLocationRelativeTo(null); // Centre la fenêtre au milieu de l'écran
         frame.setVisible(true); // Affiche la fenêtre
+
+
+
+
     }
 }
