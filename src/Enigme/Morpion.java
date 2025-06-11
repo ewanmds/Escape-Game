@@ -9,7 +9,7 @@ public class Morpion {
     public Morpion() {
 
     }
-
+//test
     public void affect(int x, int y, int largeur, int hauteur) {
         this.x = x;
         this.y = y;
