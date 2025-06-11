@@ -1,3 +1,5 @@
+package Decor;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
@@ -121,7 +123,7 @@ public class Personnage {
         g.drawImage(imageActuelle, x, y, null);
     }
 
-    // Getters et Setters
+    // Getters & Setters
     public int getX() { return x; }
     public int getY() { return y; }
     public void setX(int x) { this.x = x; }

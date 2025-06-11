@@ -1,4 +1,4 @@
-import java.awt.*;
+package Decor;
 
 public class Obstacle {
     private int x, y;
@@ -10,6 +10,8 @@ public class Obstacle {
         this.largeur = largeur;
         this.hauteur = hauteur;
     }
+
+    // Getters & Setters
     public int getX() { return x; }
     public int getY() { return y; }
     public int getLargeur() { return largeur; }

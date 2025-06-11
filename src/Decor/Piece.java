@@ -1,3 +1,5 @@
+package Decor;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
@@ -75,7 +77,7 @@ public class Piece {
         g.drawImage(background, 0, 0, null);
     }
 
-    // Getters
+    // Getters & Setters
     public ArrayList<Obstacle> getObstacles() { return obstacles;}
     public Image getImage() { return background; }
     public String getNom() { return nom; }
