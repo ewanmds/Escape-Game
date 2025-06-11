@@ -8,16 +8,15 @@ import javax.imageio.ImageIO;
 import java.util.ArrayList;
 
 
-import Decor.Obstacle;
-import Decor.Personnage;
-import Decor.Piece;
+import Decor.*;
+
 
 public class Jeux extends JPanel {
     private Image background;
     private Personnage perso;
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
-    private static  int i = 0;
+    private static int i = 0;
 
 
     public Jeux() {
