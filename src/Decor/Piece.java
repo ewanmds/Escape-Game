@@ -1,5 +1,8 @@
 package Decor;
 
+import Enigme.Enigmes;
+import Enigme.Indice;
+
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.File;
@@ -15,6 +18,8 @@ public class Piece {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private int porteX, porteY, porteLargeur, porteHauteur;
     private Piece pieceDestination;
+    private Enigmes enigme;
+
 
     public Piece(String nom, String cheminImage, Piece pieceDestination) {
         this.nom = nom;
@@ -90,4 +95,11 @@ public class Piece {
     public int getLargeur() { return background.getWidth(null); }
     public int getHauteur() { return background.getHeight(null); }
 
+    public void setEnigme(Enigmes enigme) {
+        this.enigme = enigme;
+    }
+
+    public Enigmes getEnigme() {
+        return enigme;
+    }
 }

@@ -4,6 +4,8 @@ package Jeu;
 import Decor.Obstacle;
 import Decor.Personnage;
 import Decor.Piece;
+import Enigme.EnigmePostePolice;
+import Enigme.Indice;
 
 
 
@@ -28,10 +30,24 @@ public class Jeux extends JPanel {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
     private static  int i = 0;
+    private boolean Okmessage;
+    private JTextField champTexte = new JTextField(20);
+    private Indice indiceProche = null;
 
 
     public Jeux() {
         try {
+            /*
+
+
+            champTexte.setVisible(true);
+            setLayout(null);
+            champTexte.setBounds(300, 300, 100, 70);
+            champTexte.setFont(new Font("Arial", Font.PLAIN, 24));
+            add(champTexte);
+
+             */
+
             initialiserPieces();
             background = ImageIO.read(new File(pieces.get(i).getCheminImage())); // Lit l'image
             setPreferredSize(new Dimension(background.getWidth(null), background.getHeight(null))); // dimension back en fonction image
@@ -56,7 +72,7 @@ public class Jeux extends JPanel {
                 }
             });
 
-            new Timer(16, e -> { //màj le code toutes les 16 ms (environ 60 fps)
+            new Timer(8, e -> { //màj le code toutes les 16 ms (environ 60 fps)
                 if ( perso != null) {
                     perso.deplacer();
                     verifierCollisions();
@@ -69,6 +85,17 @@ public class Jeux extends JPanel {
                         obstacles.addAll(pieces.get(i).getObstacles());
                     }
 
+                    if (pieces.get(i).getEnigme() != null && pieces.get(i).getEnigme().estProcheMessage(perso)) {
+                        Okmessage = true;
+                    } else {
+                        Okmessage = false;
+                    }
+
+                    if (pieces.get(i).getEnigme() != null && pieces.get(i).getEnigme().estProcheIndice(perso) != null) {
+                        indiceProche = pieces.get(i).getEnigme().estProcheIndice(perso);
+                    } else {
+                        indiceProche = null;
+                    }
                     repaint();
                 }
             }).start();
@@ -91,6 +118,11 @@ public class Jeux extends JPanel {
         pieces.add(laboAnalyse);
         pieces.add(maisonTemoin);
         pieces.add(pieceSecrete);
+
+        postePolice.setEnigme(new EnigmePostePolice());
+        postePolice.getEnigme().ajouterIndice(new Indice(950,-20,"SALOPE"));
+        postePolice.getEnigme().ajouterIndice(new Indice(480,110,"BATARD"));
+
 
         postePolice.Porte(0, 0, 200, 10, sceneCrime);
         sceneCrime.Porte(0, 0, 200, 10, laboAnalyse);
@@ -155,6 +187,12 @@ public class Jeux extends JPanel {
             }
         }
     }
+    private void drawMultilineString(Graphics2D g2d, String text, int x, int y, int lineHeight) {
+        for (String line : text.split("\n")) {
+            g2d.drawString(line, x, y);
+            y += lineHeight;
+        }
+    }
 
     // Dessine tout (fond,perso)
     @Override
@@ -166,15 +204,33 @@ public class Jeux extends JPanel {
 
         String texte = pieces.get(i).getNom();
         g2d.setFont(new Font("Courrier New", Font.ITALIC, 70));
-        // Ombre
-        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.setColor(Color.LIGHT_GRAY);  // Ombre
         g2d.drawString(texte, 453, 1003);
-        // Texte principal
-        g2d.setColor(Color.darkGray);
+        g2d.setColor(Color.darkGray); // Texte principal
         g2d.drawString(texte, 450, 1000);
         if (perso != null) {
             perso.dessiner(g2d);
         }
+
+
+
+        if (Okmessage) {
+            Image img = Toolkit.getDefaultToolkit().getImage("ressources\\bulle_message.png");
+            g2d.drawImage(img, pieces.get(i).getEnigme().getX(), pieces.get(i).getEnigme().getY(), this);
+            g2d.setFont(new Font("Arial", Font.BOLD, 15));
+            g2d.setColor(Color.BLACK);
+            drawMultilineString(g2d, pieces.get(i).getEnigme().getMessage(), pieces.get(i).getEnigme().getX() + 70, pieces.get(i).getEnigme().getY() + 100, 20);
+        }
+
+        if (indiceProche != null) {
+            Image img = Toolkit.getDefaultToolkit().getImage("ressources\\bulle_message.png");
+            g2d.drawImage(img,indiceProche.getX(),indiceProche.getY(), this);
+            g2d.setFont(new Font("Arial", Font.BOLD, 15));
+            g2d.setColor(Color.BLACK);
+            drawMultilineString(g2d, indiceProche.getMessage(), indiceProche.getX() + 70, indiceProche.getY() + 100, 20);
+        }
+
+
     }
 
     // Programme principale pour lancer le jeu
