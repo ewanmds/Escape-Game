@@ -231,18 +231,6 @@ public class Jeux extends JPanel {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
-        g2d.drawImage(pieces.get(i).getImage(), 0, 0, this);
-
-
-        String texte = pieces.get(i).getNom();
-        g2d.setFont(new Font("Courrier New", Font.ITALIC, 70));
-        g2d.setColor(Color.LIGHT_GRAY);  // Ombre
-        g2d.drawString(texte, 453, 1003);
-        g2d.setColor(Color.darkGray); // Texte principal
-        g2d.drawString(texte, 450, 1000);
-        if (perso != null) {
-            perso.dessiner(g2d);
-
 
         if (mode == ModeJeu.EXPLORATION) {
             g2d.drawImage(pieces.get(i).getImage(), 0, 0, this);
