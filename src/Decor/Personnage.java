@@ -123,7 +123,11 @@ public class Personnage {
         g.drawImage(imageActuelle, x, y, null);
     }
 
+
+    // Getters & Setters
+
     // Getters et Setters
+
     public int getX() { return x; }
     public int getY() { return y; }
     public void setX(int x) { this.x = x; }
