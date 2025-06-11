@@ -1,11 +1,8 @@
 package Jeu;
 
 
-import Decor.Obstacle;
-import Decor.Personnage;
-import Decor.Piece;
-
-
+import Decor.*;
+import Enigme.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +11,15 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import java.util.ArrayList;
 
-
-
-import Decor.*;
-
-
-
-
 public class Jeux extends JPanel {
     private Image background;
     private Personnage perso;
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
     private static int i = 0;
+    private Morpion morpion = new Morpion();
+    private enum ModeJeu { EXPLORATION, MORPION }
+    private ModeJeu mode = ModeJeu.EXPLORATION;
 
 
     public Jeux() {
@@ -40,22 +33,39 @@ public class Jeux extends JPanel {
 
             setFocusable(true); // Fait la liaison entre clavier et le Jpanel
 
-            setFocusable(true); // Fait liaison entre clavier et le Jpanel
+            requestFocusInWindow();
 
 
             // Écoute les évènements du claviers (touches enfoncées ou relachées)
             addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyPressed(KeyEvent e) {
-                    if (perso != null) perso.toucheEnfoncee(e);
+                    if (mode == ModeJeu.EXPLORATION) {
+
+                        if (perso != null) perso.toucheEnfoncee(e);
+
+                        if (e.getKeyCode() == KeyEvent.VK_M) {
+                            mode = ModeJeu.MORPION;
+                            morpion.Reset();
+
+                        }
+                    } else if (mode == ModeJeu.MORPION) {
+                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                            mode = ModeJeu.EXPLORATION;
+                        }
+                    }
                 }
+
                 @Override
                 public void keyReleased(KeyEvent e) {
                     if (perso != null) perso.toucheRelachee(e);
                 }
             });
 
+            addMouseListener(new Souris(this));
+
             new Timer(16, e -> { //màj le code toutes les 16 ms (environ 60 fps)
+                if (mode == ModeJeu.EXPLORATION){
                 if ( perso != null) {
                     perso.deplacer();
                     verifierCollisions();
@@ -67,7 +77,7 @@ public class Jeux extends JPanel {
                         obstacles.clear();
                         obstacles.addAll(pieces.get(i).getObstacles());
                     }
-
+                }
                     repaint();
                 }
             }).start();
@@ -160,19 +170,25 @@ public class Jeux extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(pieces.get(i).getImage(), 0, 0, this);
+
+        if (mode == ModeJeu.EXPLORATION) {
+            g2d.drawImage(pieces.get(i).getImage(), 0, 0, this);
 
 
-        String texte = pieces.get(i).getNom();
-        g2d.setFont(new Font("Courrier New", Font.ITALIC, 70));
-        // Ombre
-        g2d.setColor(Color.LIGHT_GRAY);
-        g2d.drawString(texte, 453, 1003);
-        // Texte principal
-        g2d.setColor(Color.darkGray);
-        g2d.drawString(texte, 450, 1000);
-        if (perso != null) {
-            perso.dessiner(g2d);
+            String texte = pieces.get(i).getNom();
+            g2d.setFont(new Font("Courrier New", Font.ITALIC, 70));
+            // Ombre
+            g2d.setColor(Color.LIGHT_GRAY);
+            g2d.drawString(texte, 453, 1003);
+            // Texte principal
+            g2d.setColor(Color.darkGray);
+            g2d.drawString(texte, 450, 1000);
+            if (perso != null) {
+                perso.dessiner(g2d);
+            }
+        }
+        else if (mode == ModeJeu.MORPION) {
+            morpion.dessiner(g2d, getWidth(), getHeight());
         }
     }
 
