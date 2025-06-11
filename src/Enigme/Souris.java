@@ -10,6 +10,6 @@ public class Souris extends MouseAdapter{
     public void mouseClicked(MouseEvent m) {
         int x = m.getX();
         int y = m.getY();
-        // d.affect(x, y);
+        //d.affect(x, y);
     }
 }

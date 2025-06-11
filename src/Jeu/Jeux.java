@@ -47,6 +47,8 @@ public class Jeux extends JPanel {
                         if (e.getKeyCode() == KeyEvent.VK_M) {
                             mode = ModeJeu.MORPION;
                             morpion.Reset();
+                            System.out.println("ca marche");
+                            repaint();
 
                         }
                     } else if (mode == ModeJeu.MORPION) {
@@ -62,7 +64,18 @@ public class Jeux extends JPanel {
                 }
             });
 
-            addMouseListener(new Souris(this));
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent m) {
+                    requestFocusInWindow();
+                    if (mode == ModeJeu.MORPION) {
+                        int x = m.getX();
+                        int y = m.getY();
+                        morpion.affect(m.getX(), m.getY(), getWidth(), getHeight());
+                        repaint(); // pour voir le X ou O apparaître
+                    }
+                }
+            });
 
             new Timer(16, e -> { //màj le code toutes les 16 ms (environ 60 fps)
                 if (mode == ModeJeu.EXPLORATION){
@@ -188,6 +201,8 @@ public class Jeux extends JPanel {
             }
         }
         else if (mode == ModeJeu.MORPION) {
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, getWidth(), getHeight());
             morpion.dessiner(g2d, getWidth(), getHeight());
         }
     }
