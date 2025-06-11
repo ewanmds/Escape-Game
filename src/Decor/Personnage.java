@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Personnage {
     private int x, y;
-    private final int largeur = 205, hauteur = 500, vitesse = 15;
+    private final int largeur = 205, hauteur = 500, vitesse = 20;
     private int dernierX, dernierY;
     private String direction = "dos"; // la position initiale du peros est de dos
     private BufferedImage imageDos, imageFace, imageGauche, imageDroite, imageActuelle;
