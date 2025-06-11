@@ -77,7 +77,11 @@ public class Piece {
         g.drawImage(background, 0, 0, null);
     }
 
+
+    // Getters & Setters
+
     // Getters
+
     public ArrayList<Obstacle> getObstacles() { return obstacles;}
     public Image getImage() { return background; }
     public String getNom() { return nom; }
