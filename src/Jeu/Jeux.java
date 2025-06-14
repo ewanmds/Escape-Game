@@ -17,7 +17,7 @@ public class Jeux extends JPanel {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
 
-    private static  int i = 0;
+    private static  int i = 3;
     private JTextField champTexte = new JTextField(20);
     private Indice indiceProche = null;
 
@@ -61,16 +61,19 @@ public class Jeux extends JPanel {
 
                         if (perso != null) perso.toucheEnfoncee(e);
 
-                        if (e.getKeyCode() == KeyEvent.VK_M  && i == 3 && estProche(perso.getX(),perso.getY(),xMorpion,yMorpion,100)) {
+                        if (e.getKeyCode() == KeyEvent.VK_E  && i == 3 && estProche(perso.getX(),perso.getY(),xMorpion,yMorpion,100)) {
                             mode = ModeJeu.MORPION;
                             morpion.Reset();
-                            System.out.println("ca marche");
                             repaint();
 
                         }
                     } else if (mode == ModeJeu.MORPION) {
                         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                             mode = ModeJeu.EXPLORATION;
+                        }
+                        if (e.getKeyCode() == KeyEvent.VK_R){
+                            morpion.Reset();
+                            repaint();
                         }
                     }
                 }
@@ -103,7 +106,14 @@ public class Jeux extends JPanel {
                     perso.deplacer();
                     verifierCollisions();
                     boolean surPorte = pieces.get(i).surPorte(perso);
-                    if ((surPorte == true) && perso.EAppuyee()) {
+                    if (i!=3 && (surPorte) && perso.EAppuyee()) {
+                        i++;
+                        perso.setX(500);
+                        perso.setY(500);
+                        obstacles.clear();
+                        obstacles.addAll(pieces.get(i).getObstacles());
+                    }
+                    else if (i == 3 && (surPorte) && morpion.getVictoire() && perso.EAppuyee()) {
                         i++;
                         perso.setX(500);
                         perso.setY(500);
@@ -147,7 +157,7 @@ public class Jeux extends JPanel {
         postePolice.getEnigme().ajouterIndice(new Indice(480,110,"BATARD"));
 
         maisonTemoin.setEnigme(new EnigmeTemoin());
-        maisonTemoin.getEnigme().ajouterIndice(new Indice(xMorpion,yMorpion,"Pour un indice,\ngagne contre moi\n(appuyer sur M)"));
+        maisonTemoin.getEnigme().ajouterIndice(new Indice(xMorpion,yMorpion,"Pour un indice,\ngagne contre moi\n(appuyer sur E)"));
 
 
         postePolice.Porte(20, 0, 250, 10, sceneCrime);
@@ -223,7 +233,7 @@ public class Jeux extends JPanel {
     }
 
     public boolean estProche(int x1,int y1,int x2,int y2, int distance){
-        return ((x1-x2)<distance) && ((y1-y2) < distance);
+        return (Math.abs(x1-x2) < distance) && (Math.abs(y1-y2) < distance);
     }
 
     // Dessine tout (fond,perso)
