@@ -18,7 +18,6 @@ public class Jeux extends JPanel {
     private ArrayList<Piece> pieces = new ArrayList<>();
 
     private static  int i = 0;
-    private boolean Okmessage;
     private JTextField champTexte = new JTextField(20);
     private Indice indiceProche = null;
 
@@ -27,7 +26,7 @@ public class Jeux extends JPanel {
     private enum ModeJeu { EXPLORATION, MORPION }
     private ModeJeu mode = ModeJeu.EXPLORATION;
 
-
+    private int xMorpion = 600, yMorpion = 300;
 
     public Jeux() {
         try {
@@ -62,7 +61,7 @@ public class Jeux extends JPanel {
 
                         if (perso != null) perso.toucheEnfoncee(e);
 
-                        if (e.getKeyCode() == KeyEvent.VK_M) {
+                        if (e.getKeyCode() == KeyEvent.VK_M  && i == 3 && estProche(perso.getX(),perso.getY(),xMorpion,yMorpion,100)) {
                             mode = ModeJeu.MORPION;
                             morpion.Reset();
                             System.out.println("ca marche");
@@ -112,13 +111,6 @@ public class Jeux extends JPanel {
                         obstacles.addAll(pieces.get(i).getObstacles());
                     }
 
-
-                    if (pieces.get(i).getEnigme() != null && pieces.get(i).getEnigme().estProcheMessage(perso)) {
-                        Okmessage = true;
-                    } else {
-                        Okmessage = false;
-                    }
-
                     if (pieces.get(i).getEnigme() != null && pieces.get(i).getEnigme().estProcheIndice(perso) != null) {
                         indiceProche = pieces.get(i).getEnigme().estProcheIndice(perso);
                     } else {
@@ -154,11 +146,14 @@ public class Jeux extends JPanel {
         postePolice.getEnigme().ajouterIndice(new Indice(950,-20,"SALOPE"));
         postePolice.getEnigme().ajouterIndice(new Indice(480,110,"BATARD"));
 
+        maisonTemoin.setEnigme(new EnigmeTemoin());
+        maisonTemoin.getEnigme().ajouterIndice(new Indice(xMorpion,yMorpion,"Pour un indice,\ngagne contre moi\n(appuyer sur M)"));
 
-        postePolice.Porte(0, 0, 200, 10, sceneCrime);
-        sceneCrime.Porte(0, 0, 200, 10, laboAnalyse);
-        laboAnalyse.Porte(0, 0, 200, 10, maisonTemoin);
-        maisonTemoin.Porte(0, 0, 200, 10, pieceSecrete);
+
+        postePolice.Porte(20, 0, 250, 10, sceneCrime);
+        sceneCrime.Porte(20, 0, 250, 10, laboAnalyse);
+        laboAnalyse.Porte(20, 0, 250, 10, maisonTemoin);
+        maisonTemoin.Porte(20, 0, 250, 10, pieceSecrete);
 
         // Obstacles poste Police
         postePolice.ajouterObstacle(0, 370, 1526, 50); // mur haut
@@ -219,10 +214,16 @@ public class Jeux extends JPanel {
         }
     }
     private void drawMultilineString(Graphics2D g2d, String text, int x, int y, int lineHeight) {
-        for (String line : text.split("\n")) {
-            g2d.drawString(line, x, y);
-            y += lineHeight;
+        if (text != null) {
+            for (String line : text.split("\n")) {
+                g2d.drawString(line, x, y);
+                y += lineHeight;
+            }
         }
+    }
+
+    public boolean estProche(int x1,int y1,int x2,int y2, int distance){
+        return ((x1-x2)<distance) && ((y1-y2) < distance);
     }
 
     // Dessine tout (fond,perso)
@@ -247,6 +248,13 @@ public class Jeux extends JPanel {
             if (perso != null) {
                 perso.dessiner(g2d);
             }
+            if (indiceProche != null) {
+                Image img = Toolkit.getDefaultToolkit().getImage("ressources\\bulle_message.png");
+                g2d.drawImage(img,indiceProche.getX(),indiceProche.getY(), this);
+                g2d.setFont(new Font("Arial", Font.BOLD, 15));
+                g2d.setColor(Color.BLACK);
+                drawMultilineString(g2d, indiceProche.getMessage(), indiceProche.getX() + 70, indiceProche.getY() + 100, 20);
+            }
         }
         else if (mode == ModeJeu.MORPION) {
             g2d.setColor(Color.WHITE);
@@ -256,22 +264,6 @@ public class Jeux extends JPanel {
         }
 
 
-
-        if (Okmessage) {
-            Image img = Toolkit.getDefaultToolkit().getImage("ressources\\bulle_message.png");
-            g2d.drawImage(img, pieces.get(i).getEnigme().getX(), pieces.get(i).getEnigme().getY(), this);
-            g2d.setFont(new Font("Arial", Font.BOLD, 15));
-            g2d.setColor(Color.BLACK);
-            drawMultilineString(g2d, pieces.get(i).getEnigme().getMessage(), pieces.get(i).getEnigme().getX() + 70, pieces.get(i).getEnigme().getY() + 100, 20);
-        }
-
-        if (indiceProche != null) {
-            Image img = Toolkit.getDefaultToolkit().getImage("ressources\\bulle_message.png");
-            g2d.drawImage(img,indiceProche.getX(),indiceProche.getY(), this);
-            g2d.setFont(new Font("Arial", Font.BOLD, 15));
-            g2d.setColor(Color.BLACK);
-            drawMultilineString(g2d, indiceProche.getMessage(), indiceProche.getX() + 70, indiceProche.getY() + 100, 20);
-        }
 
 
     }
