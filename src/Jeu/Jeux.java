@@ -17,7 +17,7 @@ public class Jeux extends JPanel {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
 
-    private static  int i = 0;
+    private static  int i = 3;
     private JTextField champTexte = new JTextField(20);
     private Indice indiceProche = null;
 
@@ -270,7 +270,6 @@ public class Jeux extends JPanel {
             g2d.setColor(Color.WHITE);
             g2d.fillRect(0, 0, getWidth(), getHeight());
             morpion.dessiner(g2d, getWidth(), getHeight());
-
         }
 
 

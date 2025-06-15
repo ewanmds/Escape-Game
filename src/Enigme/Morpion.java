@@ -10,6 +10,7 @@ public class Morpion {
     public static boolean tour = false;
     private static int i = 0;
     private static boolean victoire = false;
+    private static boolean fin = false;
     public Morpion() {
 
     }
@@ -35,8 +36,11 @@ public class Morpion {
                 }
             }
         }
-
-        if (tour) {
+        //empeche le bot de jouer si on gagne
+        if (detecterVictoire(grille) == 1){
+            fin = true;
+        }
+        if (tour && !fin) {
             //blocage en ligne
             for (int l = 0; l < 3; l++) {
                 int nb = 0, nbVide = 0, caseVide = 0;
@@ -56,7 +60,7 @@ public class Morpion {
                 }
             }
         }
-        if (tour) {
+        if (tour && !fin) {
             //blocage en colonne
             for (int c = 0; c < 3; c++) {
                 int nb = 0, nbVide = 0, caseVide = 0;
@@ -76,7 +80,7 @@ public class Morpion {
                 }
             }
         }
-        if (tour) {
+        if (tour && !fin) {
             //blocage en diagonale 1
             int nb = 0, nbVide = 0, caseVide = 0, l = 0;
             for (int c = 0; c < 3; c++) {
@@ -95,7 +99,7 @@ public class Morpion {
                 tour = false;
             }
         }
-        if (tour) {
+        if (tour && !fin) {
             //blocage en diagonale 1
             int nb = 0, nbVide = 0, caseVideLigne = 0, caseVideColonne = 0, l = 2;
             for (int c = 0; c < 3; c++) {
@@ -116,7 +120,7 @@ public class Morpion {
             }
         }
         Random rand = new Random();
-        while (tour && i<9) {
+        while (tour && i<9 && !fin) {
             int ligneAleatoire = rand.nextInt(2);
             int colonneAleatoire = rand.nextInt(2);
             if (grille[ligneAleatoire][colonneAleatoire] == 0) {
@@ -155,6 +159,7 @@ public class Morpion {
             g.setFont(new Font("Courrier New", Font.ITALIC, 70));
             g.setColor(Color.green);
             victoire = true;
+            fin = true;
             drawMultilineString(g, "Tu as gagné !\nechap : sortir du morpion", largeur/2-150, hauteur /2-150, 70);
 
         }
@@ -162,13 +167,13 @@ public class Morpion {
             g.setFont(new Font("Courrier New", Font.ITALIC, 70));
             g.setColor(Color.red);
             drawMultilineString(g, "Tu as perdu !\nR : recommencer\nechap : sortir du morpion", largeur/2-150, hauteur /2-150, 70);
-
+            fin = true;
         }
         if (detecterVictoire(grille) == 0){
             g.setFont(new Font("Courrier New", Font.ITALIC, 70));
             g.setColor(Color.black);
             drawMultilineString(g, "Egalité !\nR : recommencer\nechap : sortir du morpion", largeur/2-100, hauteur /2-100, 70);
-
+            fin = true;
         }
     }
 
@@ -176,7 +181,7 @@ public class Morpion {
         grille = new int [3][3];
         i = 0;
         tour = false;
-
+        fin = false;
     }
 
     public static int detecterVictoire(int[][] grille) {

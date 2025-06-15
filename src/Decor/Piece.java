@@ -30,7 +30,6 @@ public class Piece {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public Piece(String nom, String cheminImage) {
