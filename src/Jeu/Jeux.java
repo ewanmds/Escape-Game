@@ -17,7 +17,7 @@ public class Jeux extends JPanel {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
 
-    private static  int i = 3;
+    private static  int i = 0;
     private JTextField champTexte = new JTextField(20);
     private Indice indiceProche = null;
 

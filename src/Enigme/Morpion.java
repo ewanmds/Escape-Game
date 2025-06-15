@@ -1,6 +1,7 @@
 package Enigme;
 
 import java.awt.*;
+import java.awt.image.ImageObserver;
 import java.util.Random;
 
 public class Morpion {
@@ -136,8 +137,7 @@ public class Morpion {
         g.drawLine(x1, y1+ hauteur /3, x1+ largeur, y1+ hauteur /3);
         g.drawLine(x1+ largeur *2/3, y1, x1+ largeur *2/3, y1+ hauteur);
         g.drawLine(x1, y1+ hauteur *2/3, x1+ largeur, y1+ hauteur *2/3);
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-        g.drawString("Morpion", largeur/2, 50);
+
 
 
         for (int k = 0; k<3; k++) {
