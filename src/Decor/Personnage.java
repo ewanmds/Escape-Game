@@ -11,7 +11,6 @@ public class Personnage {
     private int x, y;
     private final int largeur = 205, hauteur = 500, vitesse = 20;
     private int dernierX, dernierY;
-    private String direction = "dos"; // la position initiale du peros est de dos
     private BufferedImage imageDos, imageFace, imageGauche, imageDroite, imageActuelle;
     private boolean haut, bas, gauche, droite, toucheE;
 
@@ -22,6 +21,7 @@ public class Personnage {
         imageActuelle = imageDos;
     }
 
+    //Gestion des images
     private void chargerImages() {
         String chemin = "ressources\\";
         try {
@@ -36,7 +36,7 @@ public class Personnage {
 
     private BufferedImage redimensionnerImage(BufferedImage originale) {
         if (originale == null) return null;
-        Image tmp = originale.getScaledInstance(largeur, hauteur, Image.SCALE_SMOOTH);
+        Image tmp = originale.getScaledInstance(largeur, hauteur, Image.SCALE_SMOOTH); // redimesnionne l'image
         BufferedImage resized = new BufferedImage(largeur, hauteur, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = resized.createGraphics();
         g2d.drawImage(tmp, 0, 0, null);
@@ -44,7 +44,7 @@ public class Personnage {
         return resized;
     }
 
-
+    //Gestion des touches
     public void toucheEnfoncee(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_Z:
@@ -78,8 +78,8 @@ public class Personnage {
         }
     }
 
-    public boolean EAppuyee() { return toucheE; }
 
+    //Gestion des déplacements
     public void deplacer() {
         dernierX = x;
         dernierY = y;
@@ -87,22 +87,18 @@ public class Personnage {
         if (haut) {
             y -= vitesse;
             imageActuelle = imageDos;
-            direction = "dos";
         }
         if (bas) {
             y += vitesse;
             imageActuelle = imageFace;
-            direction = "face";
         }
         if (gauche) {
             x -= vitesse;
             imageActuelle = imageGauche;
-            direction = "gauche";
         }
         if (droite) {
             x += vitesse;
             imageActuelle = imageDroite;
-            direction = "droite";
         }
     }
 
@@ -111,6 +107,7 @@ public class Personnage {
         y = dernierY;
     }
 
+    //Gestion des collisions
     public boolean collision(Obstacle obs) {
         int piedY = this.y + this.hauteur;
         return this.x < obs.getX() + obs.getLargeur() &&
@@ -124,10 +121,8 @@ public class Personnage {
     }
 
 
-    // Getters & Setters
-
     // Getters et Setters
-
+    public boolean toucheE() { return toucheE; }
     public int getX() { return x; }
     public int getY() { return y; }
     public void setX(int x) { this.x = x; }

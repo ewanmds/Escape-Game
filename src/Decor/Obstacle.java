@@ -13,8 +13,6 @@ public class Obstacle {
 
 
     // Getters & Setters
-
-
     public int getX() { return x; }
     public int getY() { return y; }
     public int getLargeur() { return largeur; }

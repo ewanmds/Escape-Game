@@ -15,12 +15,13 @@ public class Piece {
     private Image background;
     private String nom;
     private String cheminImage;
+
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private int porteX, porteY, porteLargeur, porteHauteur;
     private Piece pieceDestination;
     private Enigmes enigme;
 
-
+    //La plupart des pièces ont une destination
     public Piece(String nom, String cheminImage, Piece pieceDestination) {
         this.nom = nom;
         this.pieceDestination = pieceDestination;
@@ -32,6 +33,7 @@ public class Piece {
         }
     }
 
+    //La dernière pièce n'a pas de destination
     public Piece(String nom, String cheminImage) {
         this.nom = nom;
         this.cheminImage = cheminImage;
@@ -83,22 +85,14 @@ public class Piece {
 
 
     // Getters & Setters
-
-    // Getters
-
-    public ArrayList<Obstacle> getObstacles() { return obstacles;}
     public Image getImage() { return background; }
     public String getNom() { return nom; }
     public String getCheminImage() { return cheminImage;}
+
+    public ArrayList<Obstacle> getObstacles() { return obstacles;}
     public Piece getPieceDestination() { return pieceDestination; }
     public int getLargeur() { return background.getWidth(null); }
     public int getHauteur() { return background.getHeight(null); }
-
-    public void setEnigme(Enigmes enigme) {
-        this.enigme = enigme;
-    }
-
-    public Enigmes getEnigme() {
-        return enigme;
-    }
+    public void setEnigme(Enigmes enigme) { this.enigme = enigme;}
+    public Enigmes getEnigme() {return enigme; }
 }
