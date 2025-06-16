@@ -17,39 +17,26 @@ public class Jeux extends JPanel {
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private ArrayList<Piece> pieces = new ArrayList<>();
 
-    private static  int i = 0;
-    private JTextField champTexte = new JTextField(20);
+    private static  int i = 0; //Numéro de la pièce
     private Indice indiceProche = null;
 
 
     private Morpion morpion = new Morpion();
-    private enum ModeJeu { EXPLORATION, MORPION }
+    private enum ModeJeu { EXPLORATION, MORPION}
     private ModeJeu mode = ModeJeu.EXPLORATION;
-
     private int xMorpion = 600, yMorpion = 300;
+
 
     public Jeux() {
         try {
-            /*
-
-
-            champTexte.setVisible(true);
-            setLayout(null);
-            champTexte.setBounds(300, 300, 100, 70);
-            champTexte.setFont(new Font("Arial", Font.PLAIN, 24));
-            add(champTexte);
-
-             */
 
             initialiserPieces();
             background = ImageIO.read(new File(pieces.get(i).getCheminImage())); // Lit l'image
-            setPreferredSize(new Dimension(background.getWidth(null), background.getHeight(null))); // dimension back en fonction image
+            setPreferredSize(new Dimension(background.getWidth(null), background.getHeight(null))); // dimension background en fonction image
             perso = new Personnage(500, 500);
             obstacles.addAll(pieces.get(i).getObstacles());
 
-
             setFocusable(true); // Fait la liaison entre clavier et le Jpanel
-
             requestFocusInWindow();
 
 
@@ -98,36 +85,78 @@ public class Jeux extends JPanel {
                 }
             });
 
-
+            //Timer du jeu
             new Timer(16, e -> { //màj le code toutes les 16 ms (environ 60 fps)
-                if (mode == ModeJeu.EXPLORATION){
-
-                if ( perso != null) {
+                if (mode == ModeJeu.EXPLORATION && perso != null){
                     perso.deplacer();
                     verifierCollisions();
-                    boolean surPorte = pieces.get(i).surPorte(perso);
-                    if (i!=3 && (surPorte) && perso.EAppuyee()) {
-                        i++;
-                        perso.setX(500);
-                        perso.setY(500);
-                        obstacles.clear();
-                        obstacles.addAll(pieces.get(i).getObstacles());
-                    }
-                    else if (i == 3 && (surPorte) && morpion.getVictoire() && perso.EAppuyee()) {
-                        i++;
-                        perso.setX(500);
-                        perso.setY(500);
-                        obstacles.clear();
-                        obstacles.addAll(pieces.get(i).getObstacles());
+
+                    if (i == 1 || i == 2) {
+                        Enigmes enigme = pieces.get(i).getEnigme();
+                        if (enigme instanceof EnigmeSceneCrimeOuLaboAnalyse esc) {
+                            esc.verifierEtAfficher(this, perso); // on délègue à l'énigme
+                        }
                     }
 
-                    if (pieces.get(i).getEnigme() != null && pieces.get(i).getEnigme().estProcheIndice(perso) != null) {
-                        indiceProche = pieces.get(i).getEnigme().estProcheIndice(perso);
+                    boolean surPorte = pieces.get(i).surPorte(perso);
+                    boolean appuieE = perso.toucheE();
+                    boolean peutChanger = false;
+
+                    if (surPorte && appuieE) {
+                        if(i != 3) {
+                            Enigmes enigme = pieces.get(i).getEnigme();
+
+                            if ((i == 0 && ((EnigmePostePolice) enigme).estResolue())
+                                    || (i == 1 && ((EnigmeSceneCrimeOuLaboAnalyse) enigme).estResolue())
+                                    || (i == 2 && ((EnigmeSceneCrimeOuLaboAnalyse) enigme).estResolue())
+                                    || (i == 4)) { // la pièce secrète n’a pas d’énigme
+                                peutChanger = true;
+                            }
+                        } else if (morpion.getVictoire()) {
+                            peutChanger = true;
+                        }
+
+                        if (peutChanger) {
+                            i++;
+                            perso.setX(500);
+                            perso.setY(500);
+                            obstacles.clear();
+                            obstacles.addAll(pieces.get(i).getObstacles());
+                        }
+                    }
+
+                    // Gestion spécifique à la pièce 0 (poste de police)
+                    if (i == 0) {
+                        Enigmes enigme = pieces.get(i).getEnigme();
+                        if (enigme instanceof EnigmePostePolice enigmePP) {
+                            if (enigmePP.estProcheCoffres(perso)) {
+                                enigmePP.afficherBoutons(this);
+                            } else {
+                                enigmePP.retirerBoutons(this);
+                            }
+                        }
+                    }
+
+                    if (i == 0) {
+                        Enigmes enigme = pieces.get(i).getEnigme();
+                        if (enigme instanceof EnigmePostePolice) {
+                            EnigmePostePolice enigmePP = (EnigmePostePolice) enigme;
+
+                            if (enigmePP.estProcheCoffres(perso)) {
+                                enigmePP.afficherBoutons(this);
+                            } else {
+                                enigmePP.retirerBoutons(this);
+                            }
+                        }
+                    }
+
+                    //Gestion de la proximité d’un indice
+                    Enigmes enigmeActuelle = pieces.get(i).getEnigme();
+                    if (enigmeActuelle != null) {
+                        indiceProche = enigmeActuelle.estProcheIndice(perso);
                     } else {
                         indiceProche = null;
                     }
-
-                }
 
                     repaint();
                 }
@@ -139,27 +168,41 @@ public class Jeux extends JPanel {
     }
 
     private void initialiserPieces() {
-        // Création des pièces
+        //Création des pièces
         Piece pieceSecrete = new Piece("PIECE SECRETE", "ressources\\piece_secrete.png");
         Piece maisonTemoin = new Piece("MAISON DU TEMOIN", "ressources\\temoin.png",pieceSecrete);
         Piece laboAnalyse = new Piece("LABORATOIRE D'ANALYSE", "ressources\\labo_analyse.png",maisonTemoin);
         Piece sceneCrime = new Piece("SCENE DU CRIME", "ressources\\scene_crime.png",laboAnalyse);
         Piece postePolice = new Piece("POSTE DE POLICE", "ressources\\poste_police.png",sceneCrime);
 
+        //Ajout des pièces
         pieces.add(postePolice);
         pieces.add(sceneCrime);
         pieces.add(laboAnalyse);
         pieces.add(maisonTemoin);
         pieces.add(pieceSecrete);
 
+        //Ajout des enigmes et des indices
         postePolice.setEnigme(new EnigmePostePolice());
-        postePolice.getEnigme().ajouterIndice(new Indice(950,-20,"SALOPE"));
-        postePolice.getEnigme().ajouterIndice(new Indice(480,110,"BATARD"));
+        postePolice.getEnigme().ajouterIndice(new Indice(950,-20,"Coffre 1 dit :\n“La vérité est dans\nce coffre.” \n"));
+        postePolice.getEnigme().ajouterIndice(new Indice(480,110,"Coffre 2 dit :\n“Le coffre 3 ment.” "));
+        postePolice.getEnigme().ajouterIndice(new Indice(775,-20,"Coffre 3 dit :\n“Coffre 1 ment.” "));
+        postePolice.getEnigme().ajouterIndice(new Indice(150,270,"Un seul coffre\ncontient la vérité.\n (un seul des indices\n est vrai.) \n” "));
+
+        sceneCrime.setEnigme(new EnigmeSceneCrimeOuLaboAnalyse("32113312",1100,700));// MDP = 32113312
+        sceneCrime.getEnigme().ajouterIndice(new Indice(550,550," ■ ● ▲ ▲ "));
+        sceneCrime.getEnigme().ajouterIndice(new Indice(200,250," ■ ■ ▲ ● "));
+        sceneCrime.getEnigme().ajouterIndice(new Indice(1100,70,"▲ = 1\n ● = 2\n ■ = 3\n"));
+
+        laboAnalyse.setEnigme(new EnigmeSceneCrimeOuLaboAnalyse("L'ADN EST UNE CLEF",100,200));
+        laboAnalyse.getEnigme().ajouterIndice(new Indice(1200,-30,"César +3"));
+        laboAnalyse.getEnigme().ajouterIndice(new Indice(800,250,"I'XAK BPQ RKB ZIBC"));
+
 
         maisonTemoin.setEnigme(new EnigmeTemoin());
         maisonTemoin.getEnigme().ajouterIndice(new Indice(xMorpion,yMorpion,"Pour un indice,\ngagne contre moi\n(appuyer sur E)"));
 
-
+        //Création des portes
         postePolice.Porte(20, 0, 250, 10, sceneCrime);
         sceneCrime.Porte(20, 0, 250, 10, laboAnalyse);
         laboAnalyse.Porte(20, 0, 250, 10, maisonTemoin);
@@ -169,17 +212,18 @@ public class Jeux extends JPanel {
         postePolice.ajouterObstacle(0, 370, 1526, 50); // mur haut
         postePolice.ajouterObstacle(-180, 0, 100, 1500); // mur gauche
         postePolice.ajouterObstacle(-70, 1100, 1500, 100); //mur bas
-        postePolice.ajouterObstacle(1620, 0, 100, 1500);// mur froite
-        postePolice.ajouterObstacle(1190, 450, 150, 430); // canapé
+        postePolice.ajouterObstacle(1620, 0, 100, 1500);// mur droite
+        postePolice.ajouterObstacle(1215, 450, 150, 430); // canapé
         postePolice.ajouterObstacle(500, 350, 330, 240); // bureau
         postePolice.ajouterObstacle(650, 550, 10, 110); // chaise bureau
-        postePolice.ajouterObstacle(160, 450, 70, 330); // meuble
+        postePolice.ajouterObstacle(160, 450, 70, 445); // meuble
+        postePolice.ajouterObstacle(900, 650, 70, 275); // meuble droite
 
         // Obstacles scène Crime
         sceneCrime.ajouterObstacle(0, 400, 1526, 50); // mur haut
         sceneCrime.ajouterObstacle(-180, 0, 100, 1500); // mur gauche
         sceneCrime.ajouterObstacle(-70, 1100, 1500, 100); //mur bas
-        sceneCrime.ajouterObstacle(1620, 0, 100, 1500);// mur froite
+        sceneCrime.ajouterObstacle(1620, 0, 100, 1500);// mur droite
         sceneCrime.ajouterObstacle(990, 200, 330, 350); //bibliothèque
         sceneCrime.ajouterObstacle(100, 700, 60, 250); //chaise
         sceneCrime.ajouterObstacle(1150, 575, 90, 275); //chaise
@@ -201,8 +245,8 @@ public class Jeux extends JPanel {
         laboAnalyse.ajouterObstacle(-70, 1100, 1500, 100); //mur bas
         laboAnalyse.ajouterObstacle(1620, 0, 100, 1500);// mur droite
         laboAnalyse.ajouterObstacle(0, 150, 1360, 305); // armoire + grand bureau
-        laboAnalyse.ajouterObstacle(520, 400, 470, 400); // burea
-        laboAnalyse.ajouterObstacle(700, 700, 50, 200); // chaise
+        laboAnalyse.ajouterObstacle(520, 400, 470, 380); // bureau
+        laboAnalyse.ajouterObstacle(650, 700, 50, 200); // chaise
         laboAnalyse.ajouterObstacle(1280, 485, 120, 315); // table roulette
 
 
@@ -261,9 +305,9 @@ public class Jeux extends JPanel {
             if (indiceProche != null) {
                 Image img = Toolkit.getDefaultToolkit().getImage("ressources\\bulle_message.png");
                 g2d.drawImage(img,indiceProche.getX(),indiceProche.getY(), this);
-                g2d.setFont(new Font("Arial", Font.BOLD, 15));
+                g2d.setFont(new Font("Arial", Font.BOLD, 20));
                 g2d.setColor(Color.BLACK);
-                drawMultilineString(g2d, indiceProche.getMessage(), indiceProche.getX() + 70, indiceProche.getY() + 100, 20);
+                drawMultilineString(g2d, indiceProche.getMessage(), indiceProche.getX() + 30, indiceProche.getY() + 70, 35);
             }
         }
         else if (mode == ModeJeu.MORPION) {
