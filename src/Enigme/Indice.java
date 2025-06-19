@@ -12,6 +12,7 @@ public class Indice {
         this.message = message;
     }
 
+    //Vérifie si le personnage est proche de l'indice
     public boolean estProcheIndice(Personnage p) {
         int XcentrePerso = p.getX() + p.getLargeur() / 2;
         int YcentrePerso = p.getY() + p.getLargeur() / 2;

@@ -13,6 +13,7 @@ public class EnigmePostePolice implements Enigmes {
     private ArrayList<Indice> indices = new ArrayList<>();
     private JButton bouton1, bouton2, bouton3;
 
+    //Vérifie si la réponse donnée est correcte
     public boolean verifierReponse(String reponse) {
         boolean correcte = reponseCorrecte.equalsIgnoreCase(reponse.trim());
         if (correcte) {
@@ -21,11 +22,12 @@ public class EnigmePostePolice implements Enigmes {
         return correcte;
     }
 
+    //Retourne l'énoncé de l'énigme
     public String getEnonce() {
         return "Un seul coffre contient la vérité.\nMais attention : un seul de ces messages est vrai.";
     }
 
-
+    //Vérifie si le personnage est proche d'un indice
     public Indice estProcheIndice(Personnage p){
         int XcentrePerso = p.getX()  + p.getLargeur() / 2;
         int YcentrePerso = p.getY()  + p.getLargeur() / 2;
@@ -38,6 +40,7 @@ public class EnigmePostePolice implements Enigmes {
         return null;
     }
 
+    //Vérifie si le personnage est proche de la zone des coffres.
     public boolean estProcheCoffres(Personnage p) {
         int xCoffres = 150;
         int yCoffres = 480;
@@ -49,10 +52,12 @@ public class EnigmePostePolice implements Enigmes {
         return d < 260;
     }
 
+    //Ajoute un indice à l'énigme
     public void ajouterIndice(Indice indice) {
         indices.add(indice);
     }
 
+    //Affiche les boutons pour les choix de réponse
     public void afficherBoutons(JPanel panel) {
         if (bouton1 != null && bouton1.isDisplayable()) return; // déjà créés => on sort
 
@@ -85,6 +90,7 @@ public class EnigmePostePolice implements Enigmes {
         panel.repaint();
     }
 
+    //Retire tous les boutons
     public void retirerBoutons(JPanel panel) {
         if (bouton1 != null) panel.remove(bouton1);
         if (bouton2 != null) panel.remove(bouton2);
@@ -95,6 +101,7 @@ public class EnigmePostePolice implements Enigmes {
         panel.repaint();
     }
 
+    //Getters & Setters
     public ArrayList<Indice> getIndices() {
         return null;
     }

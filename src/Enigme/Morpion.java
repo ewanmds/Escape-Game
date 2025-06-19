@@ -121,8 +121,8 @@ public class Morpion {
         }
         Random rand = new Random();
         while (tour && i<9 && !fin) {
-            int ligneAleatoire = rand.nextInt(2);
-            int colonneAleatoire = rand.nextInt(2);
+            int ligneAleatoire = rand.nextInt(3);
+            int colonneAleatoire = rand.nextInt(3);
             if (grille[ligneAleatoire][colonneAleatoire] == 0) {
                 grille[ligneAleatoire][colonneAleatoire] = 2;
                 i++;

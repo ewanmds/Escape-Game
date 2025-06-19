@@ -34,6 +34,8 @@ public class Personnage {
         }
     }
 
+
+    //Redimensionne l'image à la taille du personnage
     private BufferedImage redimensionnerImage(BufferedImage originale) {
         if (originale == null) return null;
         Image tmp = originale.getScaledInstance(largeur, hauteur, Image.SCALE_SMOOTH); // redimesnionne l'image
@@ -44,7 +46,7 @@ public class Personnage {
         return resized;
     }
 
-    //Gestion des touches
+    //Gère les actions losqjes les touches sont enfoncées
     public void toucheEnfoncee(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_Z:
@@ -68,6 +70,7 @@ public class Personnage {
         }
     }
 
+    // Gère les actions lorsque des touches sont relâchées
     public void toucheRelachee(KeyEvent e) {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_Z: haut = false; break;
@@ -79,7 +82,7 @@ public class Personnage {
     }
 
 
-    //Gestion des déplacements
+    //Déplace le personnage en fonction des touches enfoncées
     public void deplacer() {
         dernierX = x;
         dernierY = y;
@@ -102,12 +105,13 @@ public class Personnage {
         }
     }
 
+    // Annule le dernier déplacement du personnage
     public void annulerDeplacement() {
         x = dernierX;
         y = dernierY;
     }
 
-    //Gestion des collisions
+    //Gestion des collisions du personnage avec un obstacle
     public boolean collision(Obstacle obs) {
         int piedY = this.y + this.hauteur;
         return this.x < obs.getX() + obs.getLargeur() &&
@@ -116,12 +120,13 @@ public class Personnage {
                 piedY + 5 > obs.getY();
     }
 
+    //Annule le dernier déplacement du personnage
     public void dessiner(Graphics2D g) {
         g.drawImage(imageActuelle, x, y, null);
     }
 
 
-    // Getters et Setters
+    //Getters et Setters
     public boolean toucheE() { return toucheE; }
     public int getX() { return x; }
     public int getY() { return y; }
