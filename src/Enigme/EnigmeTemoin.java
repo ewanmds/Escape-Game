@@ -10,10 +10,12 @@ public class EnigmeTemoin implements Enigmes {
     public EnigmeTemoin(){
     }
 
+    //Ajoute un indice à l'énigme
     public void ajouterIndice(Indice indice) {
         indices.add(indice);
     }
 
+    //Vérifie si un personnage est proche de l'indice
     public Indice estProcheIndice(Personnage p){
         int XcentrePerso = p.getX()  + p.getLargeur() / 2;
         int YcentrePerso = p.getY()  + p.getLargeur() / 2;
@@ -26,7 +28,6 @@ public class EnigmeTemoin implements Enigmes {
         return null;
     }
 
-    public ArrayList<Indice> getIndices() {
-        return indices;
-    }
+    //Getters & Setters
+    public ArrayList<Indice> getIndices() {return indices;}
 }

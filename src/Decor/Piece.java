@@ -10,18 +10,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
-
 public class Piece {
     private Image background;
     private String nom;
     private String cheminImage;
-
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
     private int porteX, porteY, porteLargeur, porteHauteur;
     private Piece pieceDestination;
     private Enigmes enigme;
 
-    //La plupart des pièces ont une destination
+    // La plupart des pièces ont une destination
     public Piece(String nom, String cheminImage, Piece pieceDestination) {
         this.nom = nom;
         this.pieceDestination = pieceDestination;
@@ -33,7 +31,7 @@ public class Piece {
         }
     }
 
-    //La dernière pièce n'a pas de destination
+    // La dernière pièce n'a pas de destination
     public Piece(String nom, String cheminImage) {
         this.nom = nom;
         this.cheminImage = cheminImage;
@@ -42,7 +40,6 @@ public class Piece {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     // Ajoute un obstacle à la pièce
@@ -53,7 +50,7 @@ public class Piece {
     // Vérifie les collisions entre le perso et obstacle
     public void verifierCollisions(Personnage perso) {
         for (Obstacle obs : obstacles) {
-            if (perso.collision(obs) == true) {
+            if (perso.collision(obs)) {
                 perso.annulerDeplacement();
                 break;
             }
@@ -71,7 +68,7 @@ public class Piece {
 
     // Vérifie si le personnage peut prendre la porte
     public boolean surPorte(Personnage perso) {
-        if (porteLargeur == 0 || porteHauteur == 0) return false; // pas de porte définie
+        if (porteLargeur == 0 || porteHauteur == 0) return false; // Pas de porte définie
         return perso.getX() < porteX + porteLargeur &&
                 perso.getX() + perso.getLargeur() > porteX &&
                 perso.getY() < porteY + porteHauteur &&
@@ -83,16 +80,14 @@ public class Piece {
         g.drawImage(background, 0, 0, null);
     }
 
-
     // Getters & Setters
     public Image getImage() { return background; }
     public String getNom() { return nom; }
-    public String getCheminImage() { return cheminImage;}
-
-    public ArrayList<Obstacle> getObstacles() { return obstacles;}
+    public String getCheminImage() { return cheminImage; }
+    public ArrayList<Obstacle> getObstacles() { return obstacles; }
     public Piece getPieceDestination() { return pieceDestination; }
     public int getLargeur() { return background.getWidth(null); }
     public int getHauteur() { return background.getHeight(null); }
-    public void setEnigme(Enigmes enigme) { this.enigme = enigme;}
-    public Enigmes getEnigme() {return enigme; }
+    public void setEnigme(Enigmes enigme) { this.enigme = enigme; }
+    public Enigmes getEnigme() { return enigme; }
 }
